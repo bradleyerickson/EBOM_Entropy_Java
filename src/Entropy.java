@@ -1,84 +1,79 @@
 import java.util.*;
 
 public class Entropy {
-	Hashtable entropy = new Hashtable();
-	Enumeration key;
-	String str;
-	double entr;
-	int[] counter;
+	Map<String, Double> entropy = new HashMap<String, Double>();
+	Map<String, Double> counter = new HashMap<String, Double>();
+
 	
 	//Constructor for the hashtable and counter array. User sends their idArray over and both are built. 
-	public Entropy(String[] clicks){
-		for(int i = 0; i < clicks.length; i++){
-			entropy.put(clicks[i], new Double(0.0));
+	public Entropy(String[] idArray){
+		for(String id : idArray){
+			String word = id.toLowerCase();
+			if(entropy.containsKey(word)){
+				continue;
+			}
+			else
+				entropy.put(word, (double) 0.0);
+			
+			if(counter.containsKey(word)){
+				continue;
+			}
+			else
+				counter.put(word, (double) 0.0);
 		}
-		
-		counter = new int[clicks.length];
-		for(int i = 0; i < clicks.length; i++){
-			counter[i] = 0;
-		}
-
 	}
 	
 	//Counts through the array and records in the counter array the amount for each element. 
-	public int[] count (String[] clicks){
-		for(int i = 0; i < counter.length; i ++){
-			counter[i] = 0;
-		}
-		key = entropy.keys();
-		while(key.hasMoreElements()){
-			str = (String) key.nextElement();
-			int foo = Integer.parseInt(str) - 1;
-			for(int i = 0; i<clicks.length; i++){
-				if(str == clicks[i]){
-					counter[foo]++;
-				}
-			}
-		}
-		return counter;
-	}
-	
-	//Does the entropy calculation and stores it to the hashtable locations
-	public void calcEntropy(String[] clickArray, int[] count){
-		key = entropy.keys();
-		while(key.hasMoreElements()){
-			str = (String) key.nextElement();
-			int foo = Integer.parseInt(str) - 1; 
-			int total = clickArray.length;
-			double prob = (double)count[foo]/(double)total;
-			entr = ((Double)entropy.get(str)).doubleValue();
-			if(count[foo] == 0){
-				entropy.put(str, new Double(entr + 0));
+	public void count(String[] clickArray){
+		for(String click : clickArray){
+			String word = click.toLowerCase();
+			if(counter.containsKey(word)){
+				double count = counter.get(word);
+				counter.put(word, count + 1);
 			}
 			else{
-				entr = entr + -(prob * Math.log10(prob));
-				entropy.put(str, new Double(entr));	
+				System.out.println("Error Unkown Click!");
+				return;
 			}
 		}
+		return;
+	}
+	
+	//Does the entropy calculation and stores it to the hashmap locations
+	public void calcEntropy(String[] idArray, int length){
+		for(String id : entropy.keySet()){
+			double prob = counter.get(id);
+				if(prob == 0.0){
+					continue;
+				}
+				prob = prob/length;
+				double entr = entropy.get(id);
+				double entrop = -(prob * Math.log10(prob));
+				System.out.println(entrop);
+				entr = entr + entrop;
+				entropy.put(id, entr);
+
+				counter.put(id, 0.0);
+		}
+		return;
 	}
 	
 	//Displays All Entropy Values 
 	public void displayAll(){
-		key = entropy.keys();
-		while(key.hasMoreElements()){
-			str = (String) key.nextElement();
-			System.out.println(str + ": "+ entropy.get(str));
+		for(String key : entropy.keySet()){
+			System.out.println(key + ": " + entropy.get(key));
 		}
-		System.out.println();
-		return;
 	}
 	
 	//Displays A Specific Entropy Value
 	public void displayOne(String choice){ 
-		key = entropy.keys();
-		while(key.hasMoreElements()){
-			str = (String) key.nextElement();
-			if(str == choice){
-				System.out.println(str + ": " + entropy.get(str));
-				return;
-			}
+		if(entropy.containsKey(choice)){
+			System.out.println(choice + ": " + entropy.get(choice));
 		}
-		System.out.println("Could not find "+ choice+".");
+		else{
+			System.out.println("That choice does not exist!");
+			return;
+		}
 		return;
 	}
 }
