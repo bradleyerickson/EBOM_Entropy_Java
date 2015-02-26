@@ -8,20 +8,20 @@ public class EntropyDriver {
 		//Create the Entropy object and hashtable
 		Entropy workingList = new Entropy(idArray);
 		//Count the elements from the array and send back a list of counted instances 
-		int[] counterArray = workingList.count(clickArray);
+		workingList.count(clickArray);
 		//Calculate the entropy of each element and store in hashtable (need to send click array for size)
-		workingList.calcEntropy(clickArray, counterArray);
+		workingList.calcEntropy(idArray, clickArray.length );
 		//Display All
 		workingList.displayAll();
 		//Display 3
 		workingList.displayOne("3");
 		//Space and clear counter array
 		System.out.println();
-		counterArray = null;
+
 		//Count elements in second click stream and return counter list
-		counterArray = workingList.count(clickArray2);
+		workingList.count(clickArray2);
 		//Calculate the entropy of each element and store in hashtable (need to send click array for size)
-		workingList.calcEntropy(clickArray2, counterArray);
+		workingList.calcEntropy(idArray, clickArray2.length);
 		//Display All
 		workingList.displayAll();
 		//Display 3
